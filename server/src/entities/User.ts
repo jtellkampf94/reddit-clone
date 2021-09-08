@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
