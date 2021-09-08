@@ -1,4 +1,4 @@
-import { Query, Resolver, Arg } from "type-graphql";
+import { Query, Resolver, Arg, Int, Mutation } from "type-graphql";
 
 import { Post } from "../entities/Post";
 
@@ -9,14 +9,55 @@ export class PostResolver {
     return await Post.find();
   }
 
-  @Query(() => Post)
-  async post(@Arg("id") id: string): Promise<Post | null> {
-    const post = await Post.findOne({ where: { id } });
+  @Query(() => Post, { nullable: true })
+  post(@Arg("id") id: number): Promise<Post | undefined> {
+    return Post.findOne({ where: { id } });
+  }
+
+  @Mutation(() => Post)
+  createPost(
+    @Arg("title") title: string,
+    @Arg("text") text: string
+  ): Promise<Post> {
+    return Post.create({
+      title,
+      text,
+    }).save();
+  }
+
+  @Mutation(() => Post || null)
+  async updatePost(
+    @Arg("id") id: number,
+    @Arg("title", { nullable: true }) title: string,
+    @Arg("text", { nullable: true }) text: string
+  ): Promise<Post | null> {
+    const post = await Post.findOne({ id });
 
     if (!post) {
       return null;
     }
 
-    return post;
+    if (title !== undefined) {
+      post.title = title;
+    }
+
+    if (text !== undefined) {
+      post.text = text;
+    }
+
+    return post.save();
+  }
+
+  @Mutation(() => Boolean)
+  async deletePost(@Arg("id") id: number): Promise<boolean> {
+    const post = await Post.findOne({ id });
+
+    if (!post) {
+      return false;
+    }
+
+    post.remove();
+
+    return true;
   }
 }
