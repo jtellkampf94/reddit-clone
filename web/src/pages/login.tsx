@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Formik } from "formik";
 import { Button, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
