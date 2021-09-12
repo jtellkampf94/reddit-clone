@@ -13,6 +13,7 @@ import { User } from "./entities/User";
 import { Post } from "./entities/Post";
 import { PostResolver } from "./resolvers/Post";
 import { UserResolver } from "./resolvers/User";
+import { COOKIE_NAME } from "./constants";
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ const main = async () => {
       store: new RedisStore({
         client: redis,
       }),
-      name: "qid",
+      name: COOKIE_NAME,
       secret: String(process.env.REDIS_SECRET),
       resave: false,
       saveUninitialized: false,

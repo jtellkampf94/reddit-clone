@@ -104,6 +104,8 @@ export type UsernameAndPasswordInput = {
   username: Scalars['String'];
 };
 
+export type UserFragmentFragment = { __typename?: 'User', id: number, email: string, username: string, createdAt: string, updatedAt: string };
+
 export type LoginMutationVariables = Exact<{
   options: UsernameAndPasswordInput;
 }>;
@@ -125,16 +127,20 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, email: string, username: string, createdAt: string, updatedAt: string }> };
 
-
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  email
+  username
+  createdAt
+  updatedAt
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($options: UsernameAndPasswordInput!) {
   login(options: $options) {
     user {
-      id
-      email
-      username
-      createdAt
-      updatedAt
+      ...UserFragment
     }
     errors {
       field
@@ -142,7 +148,7 @@ export const LoginDocument = gql`
     }
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
@@ -155,15 +161,11 @@ export const RegisterDocument = gql`
       message
     }
     user {
-      id
-      email
-      username
-      createdAt
-      updatedAt
+      ...UserFragment
     }
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
