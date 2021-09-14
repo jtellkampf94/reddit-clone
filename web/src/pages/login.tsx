@@ -1,7 +1,8 @@
 import { Form, Formik } from "formik";
-import { Button, Box } from "@chakra-ui/react";
+import { Button, Box, Link, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { withUrqlClient } from "next-urql";
+import NextLink from "next/link";
 
 import Wrapper from "../components/Wrapper";
 import InputField from "../components/InputField";
@@ -40,6 +41,11 @@ const Login: React.FC = () => {
                 label="Password"
               />
             </Box>
+            <Flex mt={2}>
+              <NextLink href="/forgot-password">
+                <Link ml="auto">forgot password?</Link>
+              </NextLink>
+            </Flex>
             <Button
               mt={4}
               colorScheme="teal"
