@@ -1,32 +1,22 @@
 import {
   Arg,
   Field,
-  InputType,
   Mutation,
   Resolver,
   ObjectType,
+  InputType,
   Query,
   Ctx,
 } from "type-graphql";
 import argon2 from "argon2";
+import { v4 as uuidv4 } from "uuid";
 
 import { MyContext } from "../types";
 import { User } from "../entities/User";
-import { COOKIE_NAME } from "./../constants";
-
-@InputType()
-class UsernameAndPasswordInput {
-  @Field()
-  username: string;
-  @Field()
-  password: string;
-}
-
-@InputType()
-class RegisterInput extends UsernameAndPasswordInput {
-  @Field()
-  email: string;
-}
+import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "./../constants";
+import { RegisterInput } from "./RegisterInput";
+import { validateRegister } from "./../utils/validateRegister";
+import { sendEmail } from "../utils/sendEmail";
 
 @ObjectType()
 class FieldError {
@@ -42,6 +32,14 @@ class UserResponse {
   errors?: FieldError[];
   @Field(() => User, { nullable: true })
   user?: User;
+}
+
+@InputType()
+class LoginInput {
+  @Field()
+  usernameOrEmail: string;
+  @Field()
+  password: string;
 }
 
 @Resolver()
@@ -61,31 +59,41 @@ export class UserResolver {
     return user;
   }
 
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() { req, redis }: MyContext
+  ) {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return true;
+    }
+
+    const token = uuidv4();
+
+    redis.set(
+      FORGOT_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3
+    );
+
+    const html = `<a href="http://localhost:3000/change-password/${token}">reset password</a>`;
+    await sendEmail(email, html);
+
+    return true;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: RegisterInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    if (options.username.length <= 5) {
-      return {
-        errors: [
-          {
-            field: "username",
-            message: "Username must be greater than 5 characters",
-          },
-        ],
-      };
-    }
+    const errors = validateRegister(options);
 
-    if (options.password.length <= 5) {
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "Password must be greater than 5 characters",
-          },
-        ],
-      };
+    if (errors) {
+      return { errors };
     }
 
     const hashedPassword = await argon2.hash(options.password);
@@ -119,14 +127,18 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("options") options: UsernameAndPasswordInput,
+    @Arg("options") options: LoginInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await User.findOne({ username: options.username });
+    const user = await User.findOne(
+      options.usernameOrEmail.includes("@")
+        ? { email: options.usernameOrEmail }
+        : { username: options.usernameOrEmail }
+    );
 
     if (!user) {
       return {
-        errors: [{ field: "username", message: "Username doesn't exist" }],
+        errors: [{ field: "usernameOrEmail", message: "User doesn't exist" }],
       };
     }
 

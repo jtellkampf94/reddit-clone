@@ -20,10 +20,16 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type LoginInput = {
+  password: Scalars['String'];
+  usernameOrEmail: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
   deletePost: Scalars['Boolean'];
+  forgotPassword: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
@@ -42,8 +48,13 @@ export type MutationDeletePostArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
-  options: UsernameAndPasswordInput;
+  options: LoginInput;
 };
 
 
@@ -100,15 +111,10 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
-export type UsernameAndPasswordInput = {
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
-
 export type UserFragmentFragment = { __typename?: 'User', id: number, email: string, username: string, createdAt: string, updatedAt: string };
 
 export type LoginMutationVariables = Exact<{
-  options: UsernameAndPasswordInput;
+  options: LoginInput;
 }>;
 
 
@@ -148,7 +154,7 @@ export const UserFragmentFragmentDoc = gql`
 }
     `;
 export const LoginDocument = gql`
-    mutation Login($options: UsernameAndPasswordInput!) {
+    mutation Login($options: LoginInput!) {
   login(options: $options) {
     user {
       ...UserFragment
