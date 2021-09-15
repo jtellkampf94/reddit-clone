@@ -1,7 +1,15 @@
-import { Query, Resolver, Arg, Mutation, Ctx } from "type-graphql";
+import {
+  Query,
+  Resolver,
+  Arg,
+  Mutation,
+  Ctx,
+  UseMiddleware,
+} from "type-graphql";
 
 import { MyContext } from "../types";
 import { Post } from "../entities/Post";
+import { isAuth } from "./../middleware/isAuth";
 
 @Resolver()
 export class PostResolver {
@@ -16,6 +24,7 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
+  @UseMiddleware(isAuth)
   createPost(
     @Arg("title") title: string,
     @Arg("text") text: string,
