@@ -115,7 +115,7 @@ export class UserResolver {
       };
     }
 
-    const user = await User.findOne({ id: Number(userId) });
+    const user = await User.findOne(Number(userId));
 
     if (!user) {
       return {
