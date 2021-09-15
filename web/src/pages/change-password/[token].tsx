@@ -43,7 +43,7 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField
-              name="newPaswsword"
+              name="newPassword"
               placeholder="new password"
               label="New Password"
               type="password"
