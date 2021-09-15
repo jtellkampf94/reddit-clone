@@ -8,6 +8,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import cors from "cors";
+import path from "path";
 
 import { User } from "./entities/User";
 import { Post } from "./entities/Post";
@@ -25,8 +26,10 @@ const main = async () => {
     password: process.env.PG_PASSWORD,
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User],
   });
+  await connection.runMigrations();
 
   const app = express();
 
