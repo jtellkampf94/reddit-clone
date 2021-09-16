@@ -6,6 +6,8 @@ import {
   Ctx,
   UseMiddleware,
   Int,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 
 import { MyContext } from "../types";
@@ -13,8 +15,13 @@ import { Post } from "../entities/Post";
 import { isAuth } from "./../middleware/isAuth";
 import { getConnection } from "typeorm";
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+  @FieldResolver(() => String)
+  textSnippet(@Root() root: Post) {
+    root.text.slice(0, 50);
+  }
+
   @Query(() => [Post])
   async posts(
     @Arg("limit", () => Int) limit: number,
