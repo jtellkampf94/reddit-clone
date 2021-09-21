@@ -12,6 +12,7 @@ import path from "path";
 
 import { User } from "./entities/User";
 import { Post } from "./entities/Post";
+import { Updoot } from "./entities/Updoot";
 import { PostResolver } from "./resolvers/Post";
 import { UserResolver } from "./resolvers/User";
 import { COOKIE_NAME } from "./constants";
@@ -27,7 +28,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User],
+    entities: [Post, User, Updoot],
   });
   await connection.runMigrations();
 
