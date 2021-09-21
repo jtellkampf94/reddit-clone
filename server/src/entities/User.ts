@@ -1,3 +1,4 @@
+import { Updoot } from "./Updoot";
 import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -37,6 +38,9 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @OneToMany((type) => Post, (post) => post.creator)
+  @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  @OneToMany(() => Updoot, (updoot) => updoot.user)
+  updoots: Updoot[];
 }
