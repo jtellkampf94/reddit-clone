@@ -28,7 +28,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Updoot],
+    entities: [User, Post, Updoot],
   });
   await connection.runMigrations();
 

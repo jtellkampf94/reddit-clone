@@ -29,8 +29,8 @@ class PaginatedPosts {
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => String)
-  textSnippet(@Root() root: Post) {
-    root.text.slice(0, 50);
+  textSnippet(@Root() post: Post) {
+    post.text.slice(0, 50);
   }
 
   @Mutation(() => Boolean)
