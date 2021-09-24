@@ -9,13 +9,12 @@ import {
   Text,
   Flex,
   Button,
-  IconButton,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { usePostsQuery } from "../generated/graphql";
 import Layout from "../components/Layout";
+import UpdootSection from "../components/UpdootSection";
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -45,22 +44,7 @@ const Index = () => {
           {data!.posts.posts.map((p) => (
             <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
               <Box>
-                <Flex
-                  direction="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  mr={4}
-                >
-                  <IconButton
-                    icon={<ChevronUpIcon />}
-                    aria-label="updoot post"
-                  />
-                  {p.points}
-                  <IconButton
-                    icon={<ChevronDownIcon />}
-                    aria-label="downdoot post"
-                  />
-                </Flex>
+                <UpdootSection post={p} />
               </Box>
               <Box>
                 <Heading fontSize="xl">{p.title}</Heading>{" "}
