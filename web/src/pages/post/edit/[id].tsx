@@ -6,14 +6,14 @@ import { withUrqlClient } from "next-urql";
 import InputField from "../../../components/InputField";
 import Layout from "../../../components/Layout";
 import { createUrqlClient } from "../../../utils/createUrqlClient";
-import { useGetPostfromUrl } from "../../../utils/useGetPostFromUrl";
+import { useGetPostFromUrl } from "../../../utils/useGetPostFromUrl";
 import { useUpdatePostMutation } from "../../../generated/graphql";
 import { useGetIntId } from "../../../utils/useGetIntId";
 
 const EditPost: React.FC = () => {
   const intId = useGetIntId();
   const router = useRouter();
-  const [{ data, fetching }] = useGetPostfromUrl();
+  const [{ data, fetching }] = useGetPostFromUrl();
   const [, updatePost] = useUpdatePostMutation();
 
   if (fetching) {
@@ -38,7 +38,7 @@ const EditPost: React.FC = () => {
         initialValues={{ title: data.post.title, text: data.post.text }}
         onSubmit={async (values) => {
           await updatePost({ id: intId, ...values });
-          router.push("/");
+          router.back();
         }}
       >
         {({ isSubmitting }) => (

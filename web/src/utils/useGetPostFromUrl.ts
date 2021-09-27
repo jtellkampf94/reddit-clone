@@ -1,7 +1,7 @@
 import { useGetIntId } from "./useGetIntId";
 import { usePostQuery } from "../generated/graphql";
 
-export const useGetPostfromUrl = () => {
+export const useGetPostFromUrl = () => {
   const intId = useGetIntId();
 
   return usePostQuery({
