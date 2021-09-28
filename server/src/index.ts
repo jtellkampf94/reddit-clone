@@ -16,6 +16,7 @@ import { Updoot } from "./entities/Updoot";
 import { PostResolver } from "./resolvers/Post";
 import { UserResolver } from "./resolvers/User";
 import { COOKIE_NAME } from "./constants";
+import { createUserLoader } from "./utils/createUserLoader";
 
 dotenv.config();
 
@@ -64,7 +65,12 @@ const main = async () => {
       resolvers: [PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+    }),
   });
 
   await apolloServer.start();
