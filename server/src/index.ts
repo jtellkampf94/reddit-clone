@@ -17,6 +17,7 @@ import { PostResolver } from "./resolvers/Post";
 import { UserResolver } from "./resolvers/User";
 import { COOKIE_NAME } from "./constants";
 import { createUserLoader } from "./utils/createUserLoader";
+import { createUpdootLoader } from "./utils/createUpdootLoader";
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ const main = async () => {
       res,
       redis,
       userLoader: createUserLoader(),
+      updootLoader: createUpdootLoader(),
     }),
   });
 
